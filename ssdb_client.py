@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 from SSDB import SSDB
 import time
 import unittest
@@ -54,9 +54,68 @@ class SSDBClient(SSDB):
     res = self.request('setx', [key, value, ttl])
     return res.ok()
 
+  def setnx(self, key, value):
+    res = self.request('setnx', [key, value])
+    return res.ok(), res.data
+
+  def expire(self, key, ttl):
+    res = self.request('expire', [key, ttl])
+    return res.ok(), res.data
+
   def get(self, key):
     res = self.request('get', [key])
     return res.ok(), res.data
+
+  def getset(self, key, value):
+    res = self.request('getset', [key, value])
+    return res.ok(), res.data
+
+  def incr(self, key, num):
+    res = self.request('incr', [key, num])
+    return res.ok(), res.data
+
+  def exists(self, key):
+    res = self.request('exists', [key])
+    return res.ok()
+
+  def getbit(self, key, offset):
+    res = self.request('getbit', [key, offset])
+    return res.ok(), res.data
+
+  def setbit(self, key, offset, value):
+    res = self.request('setbit', [key, offset, value])
+    return res.ok(), res.data
+
+  def bitcount(self, key, start, end):
+    res = ssdb.request('bitcount', [key, start, end])
+    return res.ok(), res.data
+
+  def countbit(self, key, start, size):
+    res = ssdb.request('countbit', [key, start, size])
+    return res.ok(), res.data
+
+  # (key_start, key_end] ("", ""]表示整个区间
+  def keys(self, key_start, key_end, limit):
+    res = ssdb.request('keys', [key_start, key_end, limit])
+    return res.ok(), res.data
+
+  # 获取key-value数组
+  def scan(self, key_start, key_end, limit):
+    res = ssdb.request('scan', [key_start, key_end, limit])
+    return res.ok(), res.data
+
+  def rscan(self, key_start, key_end, limit):
+    res = ssdb.request('rscan', [key_start, key_end, limit])
+    return res.ok(), res.data
+
+  def multi_set(self, kv_dict):
+    cmd_list = []
+    cmd_list.append("multi_set")
+    for key in kv_dict:
+      cmd_list.append(key)
+      cmd_list.append(kv_dict[key])
+    res = ssdb.request("multi_set", cmd_list)
+    return res.ok()
 
   # TMD和python的del冲突了 只能大写
   def Del(self, key):
@@ -86,7 +145,7 @@ class SSDBClient(SSDB):
 
 class TestSSDBClient(unittest.TestCase):
   def setUp(self):
-    self.ssdb_client = SSDBClient("127.0.0.1", 8881)
+    self.ssdb_client = SSDBClient("127.0.0.1", 8888)
 
   def test_hset(self):
     ssdb_client = self.ssdb_client
