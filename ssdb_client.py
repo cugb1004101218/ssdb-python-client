@@ -117,6 +117,15 @@ class SSDBClient(SSDB):
     res = ssdb.request("multi_set", cmd_list)
     return res.ok()
 
+  def multi_get(self, key_list):
+    cmd_list = []
+    cmd_list.append("multi_get")
+    cmd_list += key_list
+    res = ssdb.request("multi_get", cmd_list)
+    return res.ok(), res.data
+
+  def multi_del(self,):
+
   # TMD和python的del冲突了 只能大写
   def Del(self, key):
     res = self.request('del', [key])
